@@ -1,0 +1,15 @@
+{
+  "name": "organizar_archivos_js-main",
+  "version": "1.0.0",
+  "description": "Ejecuta este script para organizar tus archivos, basándose en la extensión que contenga.",
+  "main": "organizar.js",
+  "scripts": {
+    "run": "node organizar.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "fs": "^0.0.1-security"
+  }
+}
