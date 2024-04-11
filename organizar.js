@@ -1,54 +1,45 @@
-// Declarando variables
 const fs = require('fs');
-const rutaBiblioteca = 'C:\Users\mikeldi25\Desktop\Probando-script' // Declarando el directorio en el que deseo ordenar
-const extensiones = [`.txt|.pdf|.docx|.pptx`, `.png|.jpg|.gif`, `.exe|.rar|.zip`,] // Extensiones de las expresiones regulares
+require('dotenv').config();
 
-fs.readdir(rutaBiblioteca, (err, files)=> {
+// Recoger la ruta del usuario que desea organizar
+const rutaBiblioteca = process.env.RUTA_BIBLIOTECA;
+
+// Listado de extensiones para organizar los archivos en base a su extensión.
+const extensiones = [
+    ['.txt', '.pdf', '.docx', '.pptx'],
+    ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.jfif'],
+    ['.exe', '.rar', '.zip', '.jar']
+];
+
+// Leemos el directorio que el usuario desea organizar
+fs.readdir(rutaBiblioteca, (err, files) => {
+    if (err) {
+        console.error('Error al leer el directorio:', err);
+        return;
+    }
+    // Si encuentra archivos cogeremos este mismo y revisaremos su extension
     files.forEach(archivo => {
-        extensiones.forEach(extension => {
-            if(buscar(extension, archivo))
-            {
-                // Crear carpeta de Documentos por su extensión
-                if(extension == extensiones [0])
-                mover('Documentos', archivo);
-
-                // Crear carpeta de Documentos por su extensión
-                if(extension == extensiones [2])
-                mover('Imágenes', archivo);
-
-                // Crear carpeta de Documentos por su extensión
-                if(extension == extensiones [3])
-                mover('Programas', archivo);
+        // Leemos los archivos con su extension
+        extensiones.forEach((extension, index) => {
+            // SI la extension coincide con alguno de la lista, y termina por dicha extension
+            if (extension.some(ext => archivo.endsWith(ext))) {
+                switch (index) {
+                    case 0:
+                        // Crearemos la carpeta de Documentos por su extensión
+                        mover('Documentos', archivo);
+                        break;
+                    case 1:
+                        // Crearemos la carpeta de Imágenes por su extensión
+                        mover('Imágenes', archivo);
+                        break;
+                    case 2:
+                        // Crearemos la carpeta de Programas por su extensión
+                        mover('Programas', archivo);
+                        break;
+                    default:
+                        console.log('Extensión no reconocida');
+                }
             }
-        })
-    })
-})
-
-// Mover los archivos a la carpeta que habemos pasado por el parametro
-// En caso de no existir, esta se creará automaticamente y volvera a ejecutar la función
-
-function mover (carpeta, archivo)
-{
-    const viejaRuta = rutaBiblioteca + '/' + archivo;
-    const nuevaRuta = rutaBiblioteca + `/${carpeta}` + archivo;
-
-    fs.rename(viejaRuta, nuevaRuta, (err) => {
-        if(err) {
-            fs.mkdirSync(`${rutaBiblioteca}/${carpeta}`, {recursive:true});
-            mover(carpeta,archivo);
-        }
-        console.log(archivo + 'fue movido exitosamente.');
-    })
-}
-
-// Devuelve si es verdadero o falso dependiedno si la extensión del archivo
-// coincide con la expresión escrita anteriormente.
-
-function buscar(expresion, archivo) {
-    const exp = expresion;
-    const er = new RegExp (exp);
-    let isTheType = er.test(archivo);
-    console.log(expresion + '' + isTheType);
-
-    return isTheType;
-}
+        });
+    });
+});
